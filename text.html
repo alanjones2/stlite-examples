@@ -1,0 +1,53 @@
+<h1>stlite: Serverless Streamlit</h1>
+<h2>stlite is a browser-based implementation of Streamlit that can run apps on a web page without having to deploy to a Streamlit server</h2>
+<p><img alt="" src="0_4aM0SBn1NeWpOCMX.jpg" /></p>
+<p>Are you being served? - Photo by Blake Wisz on Unsplash</p>
+<p>Of course, there is always a server involved. A simple web page is loaded from a server (along with its dependencies) before being displayed in the browser. </p>
+<p>By 'serverless' we mean that there is no server-based code that is an integral part of the web application. In a typical server-based application, such as a Flask app, the web page - typically as a result of a user action - will call a function on the server to retrieve new data and the web page will be updated with this data.</p>
+<p>Streamlit is very much server-based: each time there is a user interaction the server is notified, the whole of the application is re-run on the server, and the web page is updated.</p>
+<p>A Streamlit app is coded in Python so the server requires a Python interpreter along with the Streamlit library to run the app and generate the web page.</p>
+<h3>Pyodide</h3>
+<p>So, how can we operate without a server where the Python code runs? </p>
+<p>Answer: Pyodide. </p>
+<p>Pyodide is a Python interpreter that has been ported to Web Assembly (WASM) and so can run in a browser. </p>
+<p>Being able to natively run Python in the browser is quite a thing; it means that we can run code that uses, for example, data science libraries that provide functionality that is not available in Javascript. And, on the other hand, because Pyodide provides communication with Javascript, the Python code can use Javascript libraries whose functionality is not available in Python (e.g. web graphics).</p>
+<h3>stlite</h3>
+<p>stlite is a port of the Streamlit library to WASM and combines with Pyodide to create a method of running Streamlit apps directly in the browser.</p>
+<p>Why is that good?</p>
+<p>Well, it means you can deploy Streamlit apps to any website and not have to rely on Streamlit Cloud or alternative hosting sites. Also, can use whatever deployment method suits you, you don't necessarily have to use GitHub - which may or may not appeal to you.</p>
+<p>One thing that may not appeal to you is, that because everything resides in the web browser, it is potentially public: this means that you should not include anything secret in your app (such as API keys).
+But bearing these things in mind, let's see how we can create Streamlit apps in the browser.
+TK</p>
+<h3>Hello stlite</h3>
+<p>A stlite app is fundamentally  an HTML page with embedded Python. You don't need to know HTML, though: the small amount that you need is boilerplate code that you should reuse for each app.</p>
+<p>You can see the code for a 'hello world' app below. This is pretty much the same as you will find in the stlite GitHub repo except instead of embedding the Python code as such, I have specified a file where the Python can be found.</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot; /&gt;
+  &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge&quot; /&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1, shrink-to-fit=no&quot; /&gt;
+  &lt;title&gt;stlite app&lt;/title&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/@stlite/mountable@0.39.0/build/stlite.css&quot; /&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+  &lt;div id=&quot;root&quot;&gt;&lt;/div&gt;
+  &lt;script src=&quot;https://cdn.jsdelivr.net/npm/@stlite/mountable@0.39.0/build/stlite.js&quot;&gt;&lt;/script&gt;
+  &lt;script&gt;
+    stlite.mount(
+      {
+        entrypoint: &quot;hello.py&quot;, // The target file of the `streamlit run` command
+        files: {
+          &quot;hello.py&quot;: {
+            url: &quot;hello.py&quot;,
+          },
+        },
+      },
+      document.getElementById(&quot;root&quot;)
+    );
+  &lt;/script&gt;
+&lt;/body&gt;
+
+&lt;/html&gt;
+</code></pre>
