@@ -253,7 +253,9 @@ That a brief run through of _stlite_ and I hope you have found it useful.
 
 _stlite_ provides us with a fairly simple way of producing serverless Streamlit app that can be uploaded as static pages to, for example, GitHub Pages, or any other static HTML file server. It support mult-page applications and let's us load libraries such as _matplotlib_.
 
-You can find more details in the _stlite_ GitHub repository (see Notes below) and you can find the source code for this article in my GitHub repository, [here](#).
+You can find more details in the _stlite_ GitHub repository (see Notes below) and you can find the source code for this article in my GitHub repository, [here](https://github.com/alanjones2/stlite-examples).
+
+Thanks for reading!
 
 ### Notes
 
