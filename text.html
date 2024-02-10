@@ -1,6 +1,6 @@
 <h1>stlite: Serverless Streamlit</h1>
 <h2>stlite is a browser-based implementation of Streamlit that can run apps on a web page without having to deploy to a Streamlit server</h2>
-<p><img alt="" src="0_4aM0SBn1NeWpOCMX.jpg" /></p>
+<p><img alt="" src="https://github.com/alanjones2/stlite-examples/blob/main/0_4aM0SBn1NeWpOCMX.jpg?raw=true" /></p>
 <p>Are you being served? - Photo by Blake Wisz on Unsplash</p>
 <p>Of course, there is always a server involved. A simple web page is loaded from a server (along with its dependencies) before being displayed in the browser. </p>
 <p>By 'serverless' we mean that there is no server-based code that is an integral part of the web application. In a typical server-based application, such as a Flask app, the web page - typically as a result of a user action - will call a function on the server to retrieve new data and the web page will be updated with this data.</p>
@@ -16,11 +16,68 @@
 <p>Why is that good?</p>
 <p>Well, it means you can deploy Streamlit apps to any website and not have to rely on Streamlit Cloud or alternative hosting sites. Also, can use whatever deployment method suits you, you don't necessarily have to use GitHub - which may or may not appeal to you.</p>
 <p>One thing that may not appeal to you is, that because everything resides in the web browser, it is potentially public: this means that you should not include anything secret in your app (such as API keys).
-But bearing these things in mind, let's see how we can create Streamlit apps in the browser.
-TK</p>
+But bearing these things in mind, let's see how we can create Streamlit apps in the browser.</p>
 <h3>Hello stlite</h3>
-<p>A stlite app is fundamentally  an HTML page with embedded Python. You don't need to know HTML, though: the small amount that you need is boilerplate code that you should reuse for each app.</p>
-<p>You can see the code for a 'hello world' app below. This is pretty much the same as you will find in the stlite GitHub repo except instead of embedding the Python code as such, I have specified a file where the Python can be found.</p>
+<p>A stlite app is fundamentally  an HTML page with embedded Python. You don't need to know HTML, though: the small amount that you need is boilerplate code that you can reuse for each app.</p>
+<p>Below is the first app that appears on the <em>stlite</em> web page (reproduced here under the Apache2 license).</p>
+<pre><code class="language-python">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot; /&gt;
+    &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge&quot; /&gt;
+    &lt;meta
+      name=&quot;viewport&quot;
+      content=&quot;width=device-width, initial-scale=1, shrink-to-fit=no&quot;
+    /&gt;
+    &lt;title&gt;stlite app&lt;/title&gt;
+    &lt;link
+      rel=&quot;stylesheet&quot;
+      href=&quot;https://cdn.jsdelivr.net/npm/@stlite/mountable@0.39.0/build/stlite.css&quot;
+    /&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div id=&quot;root&quot;&gt;&lt;/div&gt;
+    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/@stlite/mountable@0.39.0/build/stlite.js&quot;&gt;&lt;/script&gt;
+    &lt;script&gt;
+      stlite.mount(
+'
+import streamlit as st
+
+name = st.text_input('Your name')
+st.write(&quot;Hello,&quot;, name or &quot;world&quot;)
+',
+        document.getElementById(&quot;root&quot;)
+      );
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+
+</code></pre>
+<p>It's a 'hello world' program that prompts for a name and says 'Hello' to that name or 'Hello world' if no name has been entered. </p>
+<p>The Streamlit code is enclosed in quotes and inside the call to the function <code>stlite.mount</code>. This function is from the Javascript library that was loaded earlier in the listing (as was the stlite css file) and it runs the Streamlit code inside the HTML element specified in it's second parameter, i.e. <code>document.getElementById("root")</code>.</p>
+<p>Load this page in your browser and you will see the following.</p>
+<p><img alt="" src="https://github.com/alanjones2/stlite-examples/blob/main/stlite-examples/Screenshot-hello.png?raw=true" /></p>
+<p>It's the same as you would get by running the Streamlit code as a separate app. The only difference is the startup time: a <em>stlite</em> web page has to load and execute the Javascript library which is a fairly lengthy process, so you will see various messages flashed up on the screen while the app is loading. This delay occurs only once; afterwards the app has loaded it is quick to run.</p>
+<p>This first <em>stlite</em> app can be run directly in the browser (e.g. by double-clicking it in the file explorer). However, the next programs that we will encounter will consist of more than one page and so, in order to avoid CORS errors, we need to run then in a local server. So, navigate to the folder where you store the files and run the command:</p>
+<pre><code class="language-bash">python -m http.server
+</code></pre>
+<p>Depending on your set up, you may need to use <code>python3</code> instead of <code>python</code>.</p>
+<p>this command will start a local server and if you open <code>localhost:8000</code>in your browser you will see a list of the files that you can run in the browser.</p>
+<h3>Separate files</h3>
+<p>I'm not keen on mixing different languages in the same file and luckily <em>stlite</em> allows us to separate the python files from the main HTML. We do this by specifying the file path in the <code>stlite.mount()</code>function instead of the actual code. The call to mount will look something like this:</p>
+<pre><code class="language-javascript">    stlite.mount(
+      {
+        entrypoint: &quot;hello.py&quot;,
+        files: {
+          &quot;hello.py&quot;: {
+            url: &quot;hello.py&quot;,
+          },
+        },
+      }
+</code></pre>
+<p>Instead of a simple string containing the code the we specify a dictionary. The first entry in the dictionary is the file which will be the starting point for the app (yes, you can have more than one file!). The second entry specifies the file names and the url of the file (these are not the same, the <code>entrypoint</code> is the name in the virtual file system that Pyodide uses; <code>url</code> refers to the path to the original file in <em>your</em> file system.)</p>
+<p>So, in this code we are telling <em>stlite</em> to copy the file "hello.py" is your local file system into a file of the same name in the local file system. And previous to that we specified a file virtual file system as the starting point for the app.</p>
+<p>The full code for the HTML file is shown below. As you will see it is pretty similar to the first program except for the changes detailed above.</p>
 <pre><code class="language-html">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
@@ -51,3 +108,103 @@ TK</p>
 
 &lt;/html&gt;
 </code></pre>
+<p>Now we need to write the actual Python code in "hello.py".</p>
+<pre><code class="language-python">import streamlit as st
+
+st.markdown(&quot;# :balloon: Hello from :red[stlite] :balloon:&quot;)
+</code></pre>
+<p>Now when we run the HTML in the browser we wil see this:</p>
+<p><img alt="" src="https://github.com/alanjones2/stlite-examples/blob/main/Screenshot-hello-red.png?raw=true" /></p>
+<h3>Multiple files and libraries</h3>
+<p>Streamlit supports multiple pages and so does <em>stlite</em>. We simply need to add extra file specs to the dictionary passed to <code>stlite.mount</code> - you see the idea in the code below.</p>
+<pre><code class="language-javascript">    stlite.mount(
+      {
+        requirements: [&quot;matplotlib&quot;],
+        entrypoint: &quot;hello.py&quot;, // The target file of the `streamlit run` command
+        files: {
+          &quot;hello.py&quot;: {
+            url: &quot;hello.py&quot;,
+          },
+          &quot;pages/histogram.py&quot;:{
+            url: &quot;histogram.py&quot;
+          }
+        },
+      },
+      document.getElementById(&quot;root&quot;)
+    );
+</code></pre>
+<p>Here the dictionary now contains to entries, the original "hello.py" and a new file that is located in the <em>pages</em> folder called <em>histogram.py</em>. (You probably already know that the <em>pages</em> folder is where Streamlit expects to find the files for a multi-page app.)</p>
+<p>The additional file draws a histogram from a set of random numbers, so we need to import the <em>matplotlib</em> library to draw the chart. In addition to the Python <code>import</code>, we also need to tell Pyodide which libraries we are going to use. This is done in an additional dictionary entry:</p>
+<pre><code class="language-python">requirements: [&quot;matplotlib&quot;]
+</code></pre>
+<p>Here is the full HTML code for the multi-page app.</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot; /&gt;
+  &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge&quot; /&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1, shrink-to-fit=no&quot; /&gt;
+  &lt;title&gt;stlite app&lt;/title&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/@stlite/mountable@0.39.0/build/stlite.css&quot; /&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+  &lt;div id=&quot;root&quot;&gt;&lt;/div&gt;
+  &lt;script src=&quot;https://cdn.jsdelivr.net/npm/@stlite/mountable@0.39.0/build/stlite.js&quot;&gt;&lt;/script&gt;
+  &lt;script&gt;
+    stlite.mount(
+      {
+        requirements: [&quot;matplotlib&quot;],
+        entrypoint: &quot;hello.py&quot;, // The target file of the `streamlit run` command
+        files: {
+          &quot;hello.py&quot;: {
+            url: &quot;hello.py&quot;,
+          },
+          &quot;pages/histogram.py&quot;:{
+            url: &quot;histogram.py&quot;
+          }
+        },
+      },
+      document.getElementById(&quot;root&quot;)
+    );
+  &lt;/script&gt;
+&lt;/body&gt;
+
+&lt;/html&gt;
+</code></pre>
+<p>And here is the new Python code that is in the file <em>pages/histogram.py</em></p>
+<pre><code class="language-python">import streamlit as st
+import matplotlib.pyplot as plt
+import numpy as np
+
+size = st.slider(&quot;Sample size&quot;, 100, 1000)
+
+arr = np.random.normal(1, 1, size=size)
+fig, ax = plt.subplots()
+ax.hist(arr, bins=20)
+
+st.pyplot(fig)
+</code></pre>
+<p>The combination of these file produces a typical Streamlit multi-page application with the navigation in the sidebar.</p>
+<p><img alt="histogram" src="https://github.com/alanjones2/stlite-examples/blob/main/Screenshot-pages.png?raw=true" /></p>
+<h3>Conclusion</h3>
+<p>That a brief run through of <em>stlite</em> and I hope you have found it useful.</p>
+<p><em>stlite</em> provides us with a fairly simple way of producing serverless Streamlit app that can be uploaded as static pages to, for example, GitHub Pages, or any other static HTML file server. It support mult-page applications and let's us load libraries such as <em>matplotlib</em>.</p>
+<p>You can find more details in the <em>stlite</em> GitHub repository (see Notes below) and you can find the source code for this article in my GitHub repository, <a href="https://github.com/alanjones2/stlite-examples">here</a>.</p>
+<p>Thanks for reading!</p>
+<h3>Notes</h3>
+<ol>
+<li>
+<p>The <em>stlite</em> GiHub repository is <a href="https://github.com/whitphx/stlite">here</a></p>
+</li>
+<li>
+<p>Some of the code in this article is derived or copied from <em>stlite</em> in accordance with the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache2 license</a>.</p>
+</li>
+<li>
+<p>All images/screenshots are by me, the author, unless otherwise noted.</p>
+</li>
+<li>
+<p>You can find more articles on Medium or via my <a href="https://alanjones2.github.io">website</a> and you can subscribe to my occasional newsletter, <a href="https://technofile.substack.com">here</a>.</p>
+</li>
+</ol>

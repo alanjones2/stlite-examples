@@ -1,7 +1,7 @@
 # stlite: Serverless Streamlit
 ## stlite is a browser-based implementation of Streamlit that can run apps on a web page without having to deploy to a Streamlit server
 
-![](0_4aM0SBn1NeWpOCMX.jpg)
+![](https://github.com/alanjones2/stlite-examples/blob/main/0_4aM0SBn1NeWpOCMX.jpg?raw=true)
 
 Are you being served? - Photo by Blake Wisz on Unsplash
 
@@ -78,7 +78,7 @@ The Streamlit code is enclosed in quotes and inside the call to the function `st
 
 Load this page in your browser and you will see the following.
 
-![](stlite-examples/Screenshot-hello.png)
+![](https://github.com/alanjones2/stlite-examples/blob/main/stlite-examples/Screenshot-hello.png?raw=true)
 
 It's the same as you would get by running the Streamlit code as a separate app. The only difference is the startup time: a _stlite_ web page has to load and execute the Javascript library which is a fairly lengthy process, so you will see various messages flashed up on the screen while the app is loading. This delay occurs only once; afterwards the app has loaded it is quick to run.
 
@@ -156,7 +156,7 @@ st.markdown("# :balloon: Hello from :red[stlite] :balloon:")
 ```
 Now when we run the HTML in the browser we wil see this:
 
-![](Screenshot-hello-red.png)
+![](https://github.com/alanjones2/stlite-examples/blob/main/Screenshot-hello-red.png?raw=true)
 
 ### Multiple files and libraries
 
@@ -245,7 +245,7 @@ st.pyplot(fig)
 
 The combination of these file produces a typical Streamlit multi-page application with the navigation in the sidebar.
 
-![histogram](Screenshot-pages.png)
+![histogram](https://github.com/alanjones2/stlite-examples/blob/main/Screenshot-pages.png?raw=true)
 
 ### Conclusion
 
